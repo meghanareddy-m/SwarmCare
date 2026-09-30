@@ -2,16 +2,18 @@
 
 ## Intelligent Pandemic Hospital Resource Coordination Using Computational Intelligence
 
-SwarmCare is a synthetic multi-agent hospital simulation designed around a pandemic surge scenario.
+SwarmCare is a synthetic multi-agent hospital simulation designed to study how computational intelligence can support hospital resource coordination during pandemic-scale patient surges.
 
-The system models a hospital experiencing a sudden increase in patient arrivals while simultaneously dealing with limited doctors, ICU beds, oxygen, ventilators, and diagnostic resources.
+The system models a hospital experiencing sudden increases in patient arrivals while simultaneously dealing with constrained medical resources such as doctors, ICU beds, oxygen, ventilators, and diagnostic resources.
 
-The project investigates how computational-intelligence techniques can improve patient prioritization and hospital resource allocation under dynamic environmental perturbations.
+SwarmCare investigates how adaptive computational-intelligence techniques can improve patient prioritization and resource allocation when hospital conditions change dynamically.
 
-The project is designed around the intersection of:
+The project sits at the intersection of:
 
 - IEEE Engineering in Medicine and Biology Society (IEEE EMBS)
 - IEEE Computational Intelligence Society (IEEE CIS)
+
+The project also aligns with **United Nations Sustainable Development Goal 3 (SDG 3): Good Health and Well-Being**, particularly through its focus on improving the efficiency and resilience of healthcare resource coordination during large-scale health emergencies.
 
 ---
 
@@ -19,7 +21,7 @@ The project is designed around the intersection of:
 
 During a pandemic such as COVID-19, hospitals can experience sudden surges in patient arrivals.
 
-At the same time, critical resources may become unavailable due to:
+At the same time, critical healthcare resources may become constrained or unavailable due to:
 
 - ICU capacity exhaustion
 - Doctor shortages
@@ -27,11 +29,11 @@ At the same time, critical resources may become unavailable due to:
 - Ventilator failures
 - Other resource disruptions
 
-Traditional fixed allocation policies can become inefficient when the hospital state changes rapidly.
+When demand changes rapidly, fixed allocation policies may become inefficient and can lead to increased waiting times, resource conflicts, and under-utilization of available capacity.
 
-SwarmCare models this problem as a dynamic resource-allocation and patient-prioritization problem.
+SwarmCare models this situation as a **dynamic multi-agent resource-allocation and patient-prioritization problem**.
 
-The objective is to:
+The system aims to:
 
 - Maximize the number of patients successfully treated
 - Prioritize critically ill patients
@@ -41,163 +43,68 @@ The objective is to:
 - Maintain low decision latency
 - Adapt to dynamic hospital perturbations
 
----
-
-# 2. Computational Intelligence Approach
-
-SwarmCare evaluates the problem progressively using three approaches.
-
-## Attempt 1 — Greedy Baseline
-
-A deterministic severity-first allocation strategy is used as the baseline.
-
-Patients are prioritized primarily according to:
-
-1. Clinical severity
-2. Waiting time
-
-The allocator checks whether all required resources are available before committing treatment.
-
-This provides a reference point against which computational-intelligence approaches can be evaluated.
+The project uses synthetic simulation rather than real patient data. It is therefore intended as a computational-intelligence research and benchmarking environment, not as a clinical decision-support system.
 
 ---
 
-## Attempt 2 — Fuzzy Priority
+# 2. SDG 3 — Good Health and Well-Being
 
-The fixed priority rule is replaced with fuzzy-style reasoning.
+## Alignment with United Nations Sustainable Development Goal 3
 
-The priority considers:
+SwarmCare aligns with:
 
-- Patient severity
-- Waiting time
-- Oxygen requirement
+> **SDG 3: Good Health and Well-Being**
 
-The purpose is to provide a more adaptive patient-prioritization mechanism than a fixed severity ranking.
+The project contributes to SDG 3 by investigating computational methods that can improve the efficiency, responsiveness, and resilience of healthcare resource coordination during emergency situations.
 
----
+### SDG 3 relevance
 
-## Attempt 3 — Particle Swarm Optimization
+Large-scale health emergencies can place hospitals under severe operational pressure.
 
-Particle Swarm Optimization (PSO) is introduced to search for improved patient-allocation priorities.
+SwarmCare addresses this operational challenge by simulating how limited healthcare resources can be dynamically coordinated when patient demand changes.
 
-Each particle represents a candidate allocation-priority configuration.
+The system focuses on:
 
-The swarm evaluates candidate solutions according to the hospital simulation's resulting performance.
+| SwarmCare capability | Healthcare relevance |
+|---|---|
+| Patient prioritization | Helps model severity-aware treatment ordering |
+| ICU allocation | Models constrained critical-care capacity |
+| Oxygen allocation | Models shortages of essential respiratory resources |
+| Ventilator allocation | Models critical equipment constraints |
+| Doctor allocation | Models healthcare workforce limitations |
+| Pandemic surge simulation | Models sudden increases in healthcare demand |
+| Dynamic perturbations | Models changing emergency conditions |
+| Conflict minimization | Models competition for scarce resources |
+| Waiting-time minimization | Models delays in access to treatment |
+| Resource utilization | Models efficient use of constrained infrastructure |
 
-The current implementation uses:
-
-| Parameter | Value |
-|---|---:|
-| Swarm size | 12 |
-| Iterations | 15 |
-| Inertia | 0.7 |
-| Cognitive coefficient | 1.4 |
-| Social coefficient | 1.4 |
-| Random seed | 42 |
-
-The PSO implementation records convergence information for experimental analysis.
-
----
-
-# 3. Multi-Agent Representation
-
-The simulation represents important hospital entities as agents.
-
-## Patient Agent
-
-A patient contains:
-
-- Patient ID
-- Severity
-- Oxygen requirement
-- Ventilator requirement
-- Arrival time
-- Service duration
-- Waiting time
-- Treatment status
-- Completion status
-- Assigned doctor
-- Assigned bed
-
-## Doctor Agent
-
-A doctor contains:
-
-- Doctor ID
-- Treatment capacity
-- Availability
-- Current workload
-
-## Resource Agent
-
-The project also defines a generic resource-agent representation containing:
-
-- Resource type
-- Resource ID
-- Availability
-
-These representations allow the hospital environment to model interactions between patients, medical staff, and constrained resources.
-
----
-
-# 4. Dynamic Pandemic Scenario
-
-The primary benchmark is:
-
-`S5_pandemic_crisis`
-
-The scenario represents a combined pandemic crisis involving:
-
-- Patient surge
-- Staffing shortage
-- Critical resource failures
-
-The environment changes over simulation time.
-
-The current synthetic scenario includes:
-
-- Patient surge
-- Doctor unavailability
-- Oxygen reduction
-- Ventilator failure
-- ICU bed removal
-
-This allows the allocation algorithms to be evaluated under changing resource conditions rather than only under a static hospital state.
-
----
-
-# 5. Simulation Architecture
-
-The project is organized into separate components.
+### SDG 3 impact pathway
 
 ```text
-SwarmCare/
-│
-├── agents/
-│   └── entities.py
-│
-├── algorithms/
-│   ├── baseline.py
-│   ├── fuzzy_baseline.py
-|   ├── fuzzy_priority.py
-│   ├── pso.py
-│   └── pso_allocator.py
-│
-├── data/
-│   └── scenarios/
-|       └── S1_normal.json
-|       └── S2_patient_surge.json
-|       └── S3_icu_shortage.json
-|       └── S4_oxygen_shortage.json
-│       └── S5_pandemic_crisis.json
-│
-├── evaluation/
-│   ├── fitness.py
-│   └── metrics.py
-│
-├── simulation/
-│   └── hospital.py
-│
-├── main.py
-├── requirements.txt
-└── README.md
+Pandemic Patient Surge
+        |
+        v
+Increased Healthcare Demand
+        |
+        v
+Resource Competition
+        |
+        v
+Multi-Agent Coordination
+        |
+        v
+Adaptive Computational Intelligence
+        |
+        +--------------------+
+        |                    |
+        v                    v
+Better Prioritization   Better Allocation
+        |                    |
+        +---------+----------+
+                  |
+                  v
+       Reduced Operational Delay
+                  |
+                  v
+      More Efficient Healthcare
+       Resource Coordination

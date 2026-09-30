@@ -12,7 +12,7 @@ from algorithms.pso import PatientPSO
 from algorithms.pso_allocator import pso_allocate
 
 SCENARIO = Path(
-    "data/scenarios/S5_pandemic_crisis.json"
+    "data/scenarios/S3_icu_shortage.json"
 )
 
 
@@ -204,10 +204,7 @@ def main():
 
     print()
 
-    print(
-        "Scenario: "
-        "S5_pandemic_crisis"
-    )
+    print(f"Scenario: {SCENARIO.stem}")
 
     print(
         "Seed: 42"
@@ -328,27 +325,20 @@ def main():
 
     # COMPARISON
 
-    improvement = (
-
-        (
-            fuzzy_result["fitness"]
-            - baseline_result["fitness"]
-        )
-
-        / max(
-            abs(baseline_result["fitness"]),
-            1e-9
-        )
-
-    ) * 100
-
+    baseline_fitness = baseline_result["fitness"]
+    fuzzy_fitness = fuzzy_result["fitness"]
+    pso_fitness = pso_result["fitness"]
+    fuzzy_improvement = ((fuzzy_fitness - baseline_fitness)/ max(abs(baseline_fitness), 1e-9)) * 100
+    pso_improvement = ((pso_fitness - baseline_fitness)/ max(abs(baseline_fitness), 1e-9)) * 100
     print()
     print("=" * 70)
     print("ATTEMPT COMPARISON")
     print("=" * 70)
-    print(f"Baseline fitness : {baseline_result['fitness']:.4f}")
-    print(f"Fuzzy fitness : {fuzzy_result['fitness']:.4f}")
-    print(f"Improvement : {improvement:.2f}%")
+    print(f"Baseline fitness : {baseline_fitness:.4f}")
+    print(f"Fuzzy fitness    : {fuzzy_fitness:.4f}")
+    print(f"PSO fitness : {pso_fitness:.4f}")
+    print(f"Fuzzy improvement : {fuzzy_improvement:+.2f}%")
+    print(f"PSO improvement  : {pso_improvement:+.2f}%")
 
 if __name__ == "__main__":
     main()

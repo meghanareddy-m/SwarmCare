@@ -10,15 +10,25 @@ class Particle:
     vector values.
     """
 
-    def __init__(self, dimension):
+    def __init__(self, dimension, rng=None):
+        """
+        Initialize a particle using the supplied random
+        number generator.
+
+        A dedicated RNG is used so that PSO experiments
+        are reproducible when the same seed is supplied.
+        """
+
+        if rng is None:
+            rng = random.Random()
 
         self.position = [
-            random.uniform(0.0, 1.0)
+            rng.uniform(0.0, 1.0)
             for _ in range(dimension)
         ]
 
         self.velocity = [
-            random.uniform(-0.2, 0.2)
+            rng.uniform(-0.2, 0.2)
             for _ in range(dimension)
         ]
 
@@ -41,6 +51,7 @@ class PatientPSO:
         inertia
         cognitive
         social
+        seed
     """
 
     def __init__(
@@ -52,23 +63,17 @@ class PatientPSO:
         social=1.4,
         seed=42
     ):
-
         self.swarm_size = swarm_size
-
         self.iterations = iterations
-
         self.inertia = inertia
-
         self.cognitive = cognitive
-
         self.social = social
-
         self.seed = seed
 
+        # Dedicated seeded RNG for complete reproducibility.
         self.rng = random.Random(seed)
 
         self.convergence = []
-
 
     # ======================================================
     # POSITION → PATIENT ORDER
@@ -96,10 +101,8 @@ class PatientPSO:
 
         return [
             patients[index]
-            for index, _
-            in indexed
+            for index, _ in indexed
         ]
-
 
     # ======================================================
     # RESOURCE FEASIBILITY
@@ -113,10 +116,8 @@ class PatientPSO:
         """
         Evaluate a candidate patient ordering.
 
-        IMPORTANT:
         This is a lightweight virtual evaluation.
-
-        We do NOT modify the real simulator.
+        The real simulator state is not modified.
 
         The function estimates how many patients could
         be admitted with the currently available resources.
@@ -128,60 +129,51 @@ class PatientPSO:
 
         occupied_icu = sum(
             1
-            for patient
-            in simulator.treatment_patients()
+            for patient in simulator.treatment_patients()
             if patient.assigned_bed == "ICU"
         )
 
         occupied_ward = sum(
             1
-            for patient
-            in simulator.treatment_patients()
+            for patient in simulator.treatment_patients()
             if patient.assigned_bed == "WARD"
         )
 
         occupied_oxygen = sum(
             1
-            for patient
-            in simulator.treatment_patients()
+            for patient in simulator.treatment_patients()
             if patient.oxygen_required
         )
 
         occupied_ventilators = sum(
             1
-            for patient
-            in simulator.treatment_patients()
+            for patient in simulator.treatment_patients()
             if patient.ventilator_required
         )
 
         icu_available = max(
             0,
-            simulator.icu_beds
-            - occupied_icu
+            simulator.icu_beds - occupied_icu
         )
 
         ward_available = max(
             0,
-            simulator.ward_beds
-            - occupied_ward
+            simulator.ward_beds - occupied_ward
         )
 
         oxygen_available = max(
             0,
-            simulator.oxygen
-            - occupied_oxygen
+            simulator.oxygen - occupied_oxygen
         )
 
         ventilators_available = max(
             0,
-            simulator.ventilators
-            - occupied_ventilators
+            simulator.ventilators - occupied_ventilators
         )
 
         doctors_available = sum(
             1
-            for doctor
-            in simulator.doctors
+            for doctor in simulator.doctors
             if doctor.available
             and doctor.current_load == 0
         )
@@ -191,22 +183,15 @@ class PatientPSO:
         # ----------------------------------------------
 
         treated = 0
-
         critical_treated = 0
-
         conflicts = 0
-
         waiting_penalty = 0.0
 
         for patient in order:
 
             if doctors_available <= 0:
                 conflicts += 1
-
-                waiting_penalty += (
-                    patient.waiting_time
-                )
-
+                waiting_penalty += patient.waiting_time
                 continue
 
             needs_icu = (
@@ -228,51 +213,39 @@ class PatientPSO:
             if needs_icu:
 
                 if icu_available <= 0:
-
                     conflicts += 1
-
                     waiting_penalty += (
                         patient.waiting_time
                     )
-
                     continue
 
             else:
 
                 if ward_available <= 0:
-
                     conflicts += 1
-
                     waiting_penalty += (
                         patient.waiting_time
                     )
-
                     continue
 
             if (
                 needs_oxygen
                 and oxygen_available <= 0
             ):
-
                 conflicts += 1
-
                 waiting_penalty += (
                     patient.waiting_time
                 )
-
                 continue
 
             if (
                 needs_ventilator
                 and ventilators_available <= 0
             ):
-
                 conflicts += 1
-
                 waiting_penalty += (
                     patient.waiting_time
                 )
-
                 continue
 
             # ------------------------------------------
@@ -282,25 +255,19 @@ class PatientPSO:
             doctors_available -= 1
 
             if needs_icu:
-
                 icu_available -= 1
-
             else:
-
                 ward_available -= 1
 
             if needs_oxygen:
-
                 oxygen_available -= 1
 
             if needs_ventilator:
-
                 ventilators_available -= 1
 
             treated += 1
 
             if patient.severity >= 0.80:
-
                 critical_treated += 1
 
         # ----------------------------------------------
@@ -343,22 +310,13 @@ class PatientPSO:
         )
 
         fitness = (
-
-            0.45
-            * critical_coverage
-
-            + 0.35
-            * treatment_rate
-
-            - 0.10
-            * conflict_rate
-
-            - 0.10
-            * waiting_penalty
+            0.45 * critical_coverage
+            + 0.35 * treatment_rate
+            - 0.10 * conflict_rate
+            - 0.10 * waiting_penalty
         )
 
         return fitness
-
 
     # ======================================================
     # OPTIMIZE
@@ -373,8 +331,10 @@ class PatientPSO:
         Run PSO and return the best patient ordering.
         """
 
-        if not patients:
+        # Reset convergence for each optimization run.
+        self.convergence = []
 
+        if not patients:
             return [], {
                 "best_fitness": 0.0,
                 "iterations": 0,
@@ -383,12 +343,15 @@ class PatientPSO:
 
         dimension = len(patients)
 
+        # Every particle receives the same dedicated seeded
+        # RNG owned by this PSO instance. Random calls are
+        # therefore deterministic for a given seed.
         particles = [
-
-            Particle(dimension)
-
-            for _
-            in range(self.swarm_size)
+            Particle(
+                dimension,
+                rng=self.rng
+            )
+            for _ in range(self.swarm_size)
         ]
 
         # ----------------------------------------------
@@ -396,7 +359,6 @@ class PatientPSO:
         # ----------------------------------------------
 
         global_best_position = None
-
         global_best_fitness = float("-inf")
 
         # ----------------------------------------------
@@ -427,7 +389,6 @@ class PatientPSO:
                     fitness
                     > particle.best_fitness
                 ):
-
                     particle.best_fitness = (
                         fitness
                     )
@@ -444,7 +405,6 @@ class PatientPSO:
                     fitness
                     > global_best_fitness
                 ):
-
                     global_best_fitness = (
                         fitness
                     )
@@ -453,6 +413,7 @@ class PatientPSO:
                         particle.position
                     )
 
+            # Global best can only improve or remain equal.
             self.convergence.append(
                 global_best_fitness
             )
@@ -465,12 +426,12 @@ class PatientPSO:
 
                 for i in range(dimension):
 
+                    # IMPORTANT:
+                    # Always use the seeded RNG.
                     r1 = self.rng.random()
-
                     r2 = self.rng.random()
 
                     cognitive_term = (
-
                         self.cognitive
                         * r1
                         * (
@@ -480,7 +441,6 @@ class PatientPSO:
                     )
 
                     social_term = (
-
                         self.social
                         * r2
                         * (
@@ -490,17 +450,13 @@ class PatientPSO:
                     )
 
                     particle.velocity[i] = (
-
                         self.inertia
                         * particle.velocity[i]
-
                         + cognitive_term
-
                         + social_term
                     )
 
                     # Limit velocity for stability.
-
                     particle.velocity[i] = max(
                         -0.5,
                         min(
@@ -514,7 +470,6 @@ class PatientPSO:
                     )
 
                     # Keep position bounded.
-
                     particle.position[i] = max(
                         0.0,
                         min(
@@ -528,10 +483,11 @@ class PatientPSO:
         # ----------------------------------------------
 
         best_particle = Particle(
-            dimension
+            dimension,
+            rng=self.rng
         )
 
-        best_particle.position = (
+        best_particle.position = list(
             global_best_position
         )
 
@@ -541,7 +497,6 @@ class PatientPSO:
         )
 
         return best_order, {
-
             "best_fitness":
                 global_best_fitness,
 
