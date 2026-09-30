@@ -1,0 +1,849 @@
+{
+  "scenario_id": "S5_pandemic_crisis",
+  "description": "Combined patient surge, staffing shortage and critical resource failures.",
+  "seed": 42,
+  "simulation": {
+    "ticks": 80
+  },
+  "hospital": {
+    "doctors": 14,
+    "icu_beds": 8,
+    "ward_beds": 30,
+    "oxygen_units": 100,
+    "ventilators": 10,
+    "diagnostics": {
+      "CT": 2,
+      "XRAY": 2,
+      "LAB": 3
+    }
+  },
+  "patients": [
+    {
+      "patient_id": "P001",
+      "severity": 0.551,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P002",
+      "severity": 0.731,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 3
+    },
+    {
+      "patient_id": "P003",
+      "severity": 0.52,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 10
+    },
+    {
+      "patient_id": "P004",
+      "severity": 0.729,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P005",
+      "severity": 0.365,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P006",
+      "severity": 0.603,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P007",
+      "severity": 0.557,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P008",
+      "severity": 0.713,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P009",
+      "severity": 0.59,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P010",
+      "severity": 0.156,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P011",
+      "severity": 0.112,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P012",
+      "severity": 0.685,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P013",
+      "severity": 0.929,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P014",
+      "severity": 0.892,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P015",
+      "severity": 0.876,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P016",
+      "severity": 0.628,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P017",
+      "severity": 0.267,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P018",
+      "severity": 0.466,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P019",
+      "severity": 0.57,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P020",
+      "severity": 0.908,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P021",
+      "severity": 0.254,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P022",
+      "severity": 0.444,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P023",
+      "severity": 0.432,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P024",
+      "severity": 0.188,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P025",
+      "severity": 0.83,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P026",
+      "severity": 0.934,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P027",
+      "severity": 0.196,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P028",
+      "severity": 0.437,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P029",
+      "severity": 0.696,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P030",
+      "severity": 0.15,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 0,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P031",
+      "severity": 0.524,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P032",
+      "severity": 0.805,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P033",
+      "severity": 0.713,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P034",
+      "severity": 0.275,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P035",
+      "severity": 0.133,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P036",
+      "severity": 0.376,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P037",
+      "severity": 0.954,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P038",
+      "severity": 0.364,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P039",
+      "severity": 0.997,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P040",
+      "severity": 0.253,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P041",
+      "severity": 0.639,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P042",
+      "severity": 0.25,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P043",
+      "severity": 0.462,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P044",
+      "severity": 0.992,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P045",
+      "severity": 0.465,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P046",
+      "severity": 0.292,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P047",
+      "severity": 0.525,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P048",
+      "severity": 0.744,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P049",
+      "severity": 0.313,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P050",
+      "severity": 0.725,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P051",
+      "severity": 0.754,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P052",
+      "severity": 0.138,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P053",
+      "severity": 0.207,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P054",
+      "severity": 0.369,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P055",
+      "severity": 0.557,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P056",
+      "severity": 0.18,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P057",
+      "severity": 0.741,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P058",
+      "severity": 0.761,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P059",
+      "severity": 0.222,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P060",
+      "severity": 0.99,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P061",
+      "severity": 0.944,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P062",
+      "severity": 0.434,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P063",
+      "severity": 0.384,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P064",
+      "severity": 0.449,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P065",
+      "severity": 0.844,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P066",
+      "severity": 0.235,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P067",
+      "severity": 0.308,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P068",
+      "severity": 0.287,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P069",
+      "severity": 0.246,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P070",
+      "severity": 0.219,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P071",
+      "severity": 0.579,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P072",
+      "severity": 0.579,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P073",
+      "severity": 0.435,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P074",
+      "severity": 0.602,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P075",
+      "severity": 0.419,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P076",
+      "severity": 0.331,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P077",
+      "severity": 0.574,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P078",
+      "severity": 0.605,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P079",
+      "severity": 0.553,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P080",
+      "severity": 0.221,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P081",
+      "severity": 0.343,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P082",
+      "severity": 0.156,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P083",
+      "severity": 0.316,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P084",
+      "severity": 0.353,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P085",
+      "severity": 0.294,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P086",
+      "severity": 0.562,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P087",
+      "severity": 0.31,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P088",
+      "severity": 0.276,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P089",
+      "severity": 0.926,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P090",
+      "severity": 0.83,
+      "oxygen_required": true,
+      "ventilator_required": true,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P091",
+      "severity": 0.234,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P092",
+      "severity": 0.152,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P093",
+      "severity": 0.367,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P094",
+      "severity": 0.199,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P095",
+      "severity": 0.298,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P096",
+      "severity": 0.756,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P097",
+      "severity": 0.234,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P098",
+      "severity": 0.368,
+      "oxygen_required": false,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P099",
+      "severity": 0.517,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    },
+    {
+      "patient_id": "P100",
+      "severity": 0.601,
+      "oxygen_required": true,
+      "ventilator_required": false,
+      "arrival_time": 25,
+      "service_duration": 1
+    }
+  ],
+  "events": [
+    {
+      "time": 25,
+      "type": "patient_surge",
+      "description": "70 additional patients have arrived by this time."
+    },
+    {
+      "time": 40,
+      "type": "doctor_unavailable",
+      "count": 3
+    },
+    {
+      "time": 50,
+      "type": "oxygen_reduction",
+      "percentage": 35
+    },
+    {
+      "time": 60,
+      "type": "ventilator_failure",
+      "count": 3
+    },
+    {
+      "time": 70,
+      "type": "icu_beds_removed",
+      "count": 2
+    }
+  ]
+}
