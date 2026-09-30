@@ -1,110 +1,219 @@
 # SwarmCare
 
-## Intelligent Pandemic Hospital Resource Coordination Using Computational Intelligence
+**Computational-intelligence resource coordination for pandemic hospital surges — a synthetic multi-agent simulation.**
 
-SwarmCare is a synthetic multi-agent hospital simulation designed to study how computational intelligence can support hospital resource coordination during pandemic-scale patient surges.
+SwarmCare simulates a hospital under a patient surge with limited doctors, ICU/ward beds, oxygen and
+ventilators, plus mid-run shocks (ICU beds lost, oxygen cut, ventilators fail, doctors unavailable).
+It compares four allocation strategies on the same environment and the same metrics.
 
-The system models a hospital experiencing sudden increases in patient arrivals while simultaneously dealing with constrained medical resources such as doctors, ICU beds, oxygen, ventilators, and diagnostic resources.
+> **Scope and honesty note.** This is a research/benchmarking simulation on **synthetic data**. It is
+> not a clinical decision-support system, is not clinically validated, and must not be used to make
+> real patient-treatment decisions. See [Limitations](#limitations).
 
-SwarmCare investigates how adaptive computational-intelligence techniques can improve patient prioritization and resource allocation when hospital conditions change dynamically.
-
-The project sits at the intersection of:
-
-- IEEE Engineering in Medicine and Biology Society (IEEE EMBS)
-- IEEE Computational Intelligence Society (IEEE CIS)
-
-The project also aligns with **United Nations Sustainable Development Goal 3 (SDG 3): Good Health and Well-Being**, particularly through its focus on improving the efficiency and resilience of healthcare resource coordination during large-scale health emergencies.
+Aligned with **IEEE EMBS** (healthcare engineering), **IEEE CIS** (fuzzy logic, swarm intelligence,
+multi-agent systems) and **UN SDG 3 – Good Health and Well-Being** (targets 3.4 and 3.8; see [SDG 3](#sdg-3-alignment)).
 
 ---
 
-# 1. Problem Statement
+## Quick start
 
-During a pandemic such as COVID-19, hospitals can experience sudden surges in patient arrivals.
+Requires Python 3.9+. The core simulation has **no third-party dependencies**.
 
-At the same time, critical healthcare resources may become constrained or unavailable due to:
+```bash
+python main.py                                  # S5 pandemic crisis, all four attempts
+python main.py --scenario S3                    # another scenario (id, prefix or .json path)
+python main.py --all --pso-seeds 5 --output results --plots --dashboard   # benchmark + files + figures + dashboard
+python -m experiments.scaling --output results          # patient-count x PSO-budget scaling study
+python -m experiments.reserve_policy --output results   # reserve-policy experiment (critical patients)
+python -m experiments.dashboard --all --output results/dashboard.html
+```
 
-- ICU capacity exhaustion
-- Doctor shortages
-- Oxygen shortages
-- Ventilator failures
-- Other resource disruptions
+Development and tests:
 
-When demand changes rapidly, fixed allocation policies may become inefficient and can lead to increased waiting times, resource conflicts, and under-utilization of available capacity.
+```bash
+pip install -r requirements-dev.txt             # pytest, pytest-cov, matplotlib
+python -m pytest                                # 189 tests
+make test | make coverage | make benchmark      # same, via the Makefile
+```
 
-SwarmCare models this situation as a **dynamic multi-agent resource-allocation and patient-prioritization problem**.
+CLI options: `--scenario`, `--all`, `--algorithms baseline fuzzy pso decentralized`, `--pso-seeds N`,
+`--seed`, `--output DIR` (or env `SWARMCARE_RESULTS_DIR`), `--plots`, `--dashboard`,
+`--latency-budget-ms`, `--quiet`.
 
-The system aims to:
+## The four attempts
 
-- Maximize the number of patients successfully treated
-- Prioritize critically ill patients
-- Minimize patient waiting time
-- Minimize resource conflicts
-- Improve resource utilization
-- Maintain low decision latency
-- Adapt to dynamic hospital perturbations
+| # | Strategy | File(s) | Idea |
+|---|---|---|---|
+| 1 | Greedy baseline | `algorithms/baseline.py` | Sort waiting patients by `0.8·severity + 0.2·waiting/20`, admit while a doctor and all needed resources exist |
+| 2 | Fuzzy priority | `algorithms/fuzzy_priority.py`, `fuzzy_baseline.py` | Fuzzify severity / waiting / oxygen need, 7 rules, weighted-average defuzzification → priority in [0,1] |
+| 3 | PSO swarm | `algorithms/pso.py`, `pso_allocator.py` | Particles are random-key orderings of the waiting list; fitness comes from a virtual admission pass; the best ordering is executed |
+| 4 | Decentralized negotiation | `algorithms/decentralized.py`, `agents/swarm_agents.py` | Patient agents bid, resource agents grant locally, tentative grants are committed or released over several rounds. No global sort |
 
-The project uses synthetic simulation rather than real patient data. It is therefore intended as a computational-intelligence research and benchmarking environment, not as a clinical decision-support system.
+Attempts 1–3 share one admission mechanism (`algorithms/common.py`), so **only the patient ordering
+differs** between them. Attempt 4 uses the same admission constraints but reaches the decision through
+message passing.
 
----
+## Scenarios (`data/scenarios/`)
 
-# 2. SDG 3 — Good Health and Well-Being
+| Scenario | Patients | Shock |
+|---|---|---|
+| S1_normal | 30 | none |
+| S2_patient_surge | 80 | 50 additional patients at t=20 |
+| S3_icu_shortage | 60 | 3 ICU beds removed at t=25 |
+| S4_oxygen_shortage | 70 | oxygen −40 % at t=30 |
+| S5_pandemic_crisis | 100 | surge, 3 doctors out (t=40), oxygen −35 % (t=50), 3 ventilators fail (t=60), 2 ICU beds lost (t=70) |
+| S6_resource_stress | 90 | **oxygen/ventilator-bound** stress test (generated by `data/generate_stress_scenario.py`) |
+| S7_reserve_stress | 35 | **designed** case for the reserve-policy experiment: early moderate patients exhaust oxygen before critical ones arrive (`data/generate_reserve_scenario.py`) |
+| S8_clinical_inputs | 40 | patients carry `age`, `spo2` and most need a CT/XRAY/LAB diagnostic first; doctors out at t=35 (`data/generate_clinical_scenario.py`) |
 
-## Alignment with United Nations Sustainable Development Goal 3
+All data are synthetic and seeded (42). S6–S8 were added because in S1–S5 doctors, not oxygen, are the
+binding constraint (see [docs/RESULTS.md](docs/RESULTS.md)); S7 and S8 exist to exercise the reserve policy
+and the optional clinical inputs / diagnostics queue.
 
-SwarmCare aligns with:
+## Metrics and fitness
 
-> **SDG 3: Good Health and Well-Being**
+`evaluation/metrics.py` computes treatment rate, critical coverage (severity ≥ 0.80), average waiting
+time, conflict rate, resource utilization / wastage and throughput. `evaluation/fitness.py` combines them
+(higher is better):
 
-The project contributes to SDG 3 by investigating computational methods that can improve the efficiency, responsiveness, and resilience of healthcare resource coordination during emergency situations.
+```
+fitness = 0.40·critical_coverage + 0.25·treatment_rate + 0.15·resource_utilization
+        − 0.10·min(avg_wait/20, 1) − 0.10·conflict_rate
+```
 
-### SDG 3 relevance
+The benchmark additionally records decision latency per tick and, for Attempt 4, the number of agent messages.
 
-Large-scale health emergencies can place hospitals under severe operational pressure.
+**Extended metrics** (`evaluation/metrics.py`, computed from a per-tick timeline; they do **not** enter the
+fitness and leave the seven metrics above unchanged):
 
-SwarmCare addresses this operational challenge by simulating how limited healthcare resources can be dynamically coordinated when patient demand changes.
-
-The system focuses on:
-
-| SwarmCare capability | Healthcare relevance |
+| Metric | Definition |
 |---|---|
-| Patient prioritization | Helps model severity-aware treatment ordering |
-| ICU allocation | Models constrained critical-care capacity |
-| Oxygen allocation | Models shortages of essential respiratory resources |
-| Ventilator allocation | Models critical equipment constraints |
-| Doctor allocation | Models healthcare workforce limitations |
-| Pandemic surge simulation | Models sudden increases in healthcare demand |
-| Dynamic perturbations | Models changing emergency conditions |
-| Conflict minimization | Models competition for scarce resources |
-| Waiting-time minimization | Models delays in access to treatment |
-| Resource utilization | Models efficient use of constrained infrastructure |
+| `icu_saturation` | share of ticks with ICU occupancy ≥ current ICU capacity (capacity 0 after a shock counts), plus peak utilization and saturation-with-queue |
+| `recovery_time` | per event (surges and shocks): ticks until the waiting queue first returns to its pre-event length after its peak; `None` if it never does |
+| `bottleneck` | resource (doctors, ICU, ward, oxygen, ventilators) most often saturated while patients are still waiting, with all shares |
+| `latency_budget` | share of decisions within a budget (default 50 ms, `--latency-budget-ms`), p95/max, and whether p95 meets the budget; wall-clock, machine dependent |
+| `critical_patient_outcomes` | mean/max wait of critical patients (severity ≥ 0.80) vs others; used by the reserve-policy experiment because critical *coverage* saturates at 100 % |
 
-### SDG 3 impact pathway
+## Dashboard
 
-```text
-Pandemic Patient Surge
-        |
-        v
-Increased Healthcare Demand
-        |
-        v
-Resource Competition
-        |
-        v
-Multi-Agent Coordination
-        |
-        v
-Adaptive Computational Intelligence
-        |
-        +--------------------+
-        |                    |
-        v                    v
-Better Prioritization   Better Allocation
-        |                    |
-        +---------+----------+
-                  |
-                  v
-       Reduced Operational Delay
-                  |
-                  v
-      More Efficient Healthcare
-       Resource Coordination
+`results/dashboard.html` is a single self-contained file (inline SVG + vanilla JS, no dependencies, no network)
+written by `python main.py … --dashboard` or `python -m experiments.dashboard`. It shows the waiting queue over
+time for all algorithms, resource utilization over time, shock markers, every admission decision per tick
+(click a tick for the patient list, messages/rounds and reserve refusals) and the extended metrics.
+Open it in any browser; scenario, algorithm and tick are selectable.
+
+## Efficiency and innovation experiments
+
+* **Scaling study** (`experiments/scaling.py` → `results/scaling.{md,csv,json}`): 25–400 synthetic patients on a
+  *fixed* hospital × three PSO budgets (48 / 180 / 720 fitness evaluations per decision), with latency and a
+  log-log latency slope per method. More patients means heavier congestion and a bigger decision problem at
+  once.
+* **Reserve-policy experiment** (`experiments/reserve_policy.py` → `results/reserve_policy.{md,csv,json}`):
+  centralized greedy/fuzzy vs decentralized negotiation with and without an oxygen reserve for critical patients.
+  The verdict is computed from the measurements. Result: on the designed scenario S7 the reserve cuts the mean
+  wait of critical patients (6.29 → 0.86 ticks at a 40 % reserve) **at the cost of** longer non-critical waits and
+  lower fitness; on the natural oxygen-bound scenario S6 it gives no real benefit. The effect comes from the
+  reserve rule, not from decentralization as such.
+
+## Results (5 PSO seeds, synthetic data)
+
+| Scenario | Baseline | Fuzzy | PSO (mean ± std) | Decentralized |
+|---|---|---|---|---|
+| S1_normal | 0.6207 | 0.6214 | 0.6242 ± 0.0011 | 0.6214 |
+| S2_patient_surge | 0.6826 | 0.6826 | 0.6839 ± 0.0006 | 0.6826 |
+| S3_icu_shortage | 0.6387 | 0.6393 | 0.6429 ± 0.0008 | 0.6393 |
+| S4_oxygen_shortage | 0.6999 | 0.6999 | 0.7023 ± 0.0006 | 0.6999 |
+| S5_pandemic_crisis | 0.7307 | 0.7305 | 0.7307 ± 0.0001 | 0.7305 |
+| S6_resource_stress | 0.6540 | 0.6536 | 0.6542 ± 0.0003 | 0.6536 |
+| S7_reserve_stress | 0.6809 | 0.6805 | 0.6794 ± 0.0009 | 0.6805 |
+| S8_clinical_inputs | 0.7826 | 0.7826 | 0.7826 ± 0.0000 | 0.7826 |
+
+What this does and does not show:
+
+* PSO is best or tied in S1–S6 (and slightly worse than baseline on S7: −0.22 %), but the gains are small (≤ 0.65 %) and come from the
+  waiting-time and conflict terms; every strategy treats **100 %** of patients within the 80-tick horizon.
+* Fuzzy priority is essentially equal to the baseline (−0.06 % … +0.11 %).
+* With the reserve policy off, the decentralized negotiation reproduces centralized fuzzy **exactly** in
+  all eight scenarios (tested), showing that local bids and grants suffice — at the price of roughly
+  400–12 000 messages per run.
+* PSO costs ~0.5–4.3 ms per decision versus ~0.01–0.13 ms for the others (on the development machine); the
+  scaling study shows it reaching ~100 ms per decision at 400 patients with the largest budget, and a larger PSO
+  budget did **not** improve fitness there (see `results/scaling.md`).
+* Clinical inputs (S8): with age/SpO₂ recorded, fuzzy/decentralized rankings can change, but on S8 the final
+  fitness is identical for all algorithms because every patient is treated and the waits coincide.
+* **PSO superiority is not established**: differences are small, single simulator, single fitness function.
+
+Full table, ablation and caveats: [docs/RESULTS.md](docs/RESULTS.md). Regenerate with
+`python main.py --all --pso-seeds 5 --output results --plots`. Figures are written to `results/`.
+
+## Project structure
+
+```
+agents/        entities.py (Patient/Doctor/Resource dataclasses), swarm_agents.py (bidding + ICU/ward/oxygen/ventilator/doctor-pool agents)
+algorithms/    common.py (shared admission rules), baseline, fuzzy_*, pso, pso_allocator, decentralized
+simulation/    hospital.py – discrete-time HospitalSimulator with events and a diagnostics queue
+evaluation/    metrics.py, fitness.py
+experiments/   runner.py (benchmark harness, timeline/decisions, CSV/JSON/MD), plots.py (optional matplotlib),
+               dashboard.py (single-file HTML), scaling.py, reserve_policy.py
+data/          scenarios/*.json, generators, README
+docs/          ARCHITECTURE.md, RESULTS.md
+tests/         189 tests (unit, invariants, regression pins, CLI, metrics, dashboard, experiments)
+results/       sample benchmark output (regenerable)
+main.py        command-line interface
+```
+
+Architecture, agent model and workflow: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Agent model: what is and is not implemented
+
+| Concept in the problem statement | Status |
+|---|---|
+| Patient agent | `PatientAgent` (state) + bids in the decentralized allocator |
+| Doctor agent | `DoctorAgent`; idle doctors are offered by a `DoctorPoolAgent` |
+| ICU / ward bed agents | `ICUAgent`, `WardAgent` (Attempt 4); capacities in the simulator for Attempts 1–3 |
+| Oxygen / ventilator agents | `OxygenAgent`, `VentilatorAgent` with an optional reserve policy (Attempt 4, off by default) |
+| Fuzzy prioritization | implemented: severity, waiting time, oxygen need, plus **optional** SpO₂ (rule 8) and age (rule 9). If a patient has no `spo2`/`age` the extra rules do not fire and the priority is identical to the three-input version. Only the fuzzy and decentralized allocators use them; the greedy baseline and PSO's internal score do not |
+| PSO | implemented for **patient ordering only**; bed/doctor/resource distribution is not separately optimized |
+| Diagnostic scheduling (CT/X-ray/lab) | **minimal**: a patient with `diagnostic` (+ `diagnostic_duration`) waits in a per-modality queue with the capacities from the scenario, served most-severe-first, before becoming admissible; time spent there counts as waiting. No scheduling optimization, results are not fed back into severity |
+| Ambulance agents / routing | **not implemented** |
+| Per-agent neighbour communication topology | **not implemented** – negotiation is a synchronous bid/grant protocol inside one process |
+
+## SDG 3 alignment
+
+SwarmCare targets **SDG 3 – Good Health and Well-Being**, in particular **3.4** (health-system
+capacity and resilience, non-communicable and emergency conditions) and **3.8** (access to quality
+essential health services). Its contribution is methodological: a reproducible environment to test how
+patient prioritization and coordination of scarce resources (ICU, oxygen, ventilators, staff) behave under
+surges and disruptions, and how waiting time and resource conflicts respond.
+
+```
+Surge → resource competition → multi-agent coordination → adaptive prioritization
+      → lower waiting time / fewer conflicts (in simulation) → more resilient resource use
+```
+
+The link to SDG 3 is a research hypothesis evaluated on synthetic data, not a demonstrated health outcome.
+
+## Reproducibility
+
+* All scenarios are synthetic and seeded; Attempts 1, 2 and 4 are deterministic. Latency figures are wall-clock and vary by machine.
+* PSO uses a dedicated `random.Random(base_seed + tick)`; the same `--seed` reproduces a run exactly.
+* `tests/test_regression.py` pins the results of Attempts 1–3 on S1–S5 so unintended changes are caught.
+
+## Configuration
+
+No secrets or API keys are needed. The only optional environment variable is `SWARMCARE_RESULTS_DIR`
+(default output directory for `--output`); see `.env.example`.
+
+## Limitations
+
+* SpO₂ and age enter only as two extra fuzzy rules with hand-set membership functions; they are not clinically calibrated.
+* Synthetic patients and a simplified hospital: one doctor treats one patient; bed type is derived
+  from severity (≥ 0.80 → ICU); oxygen and ventilators are counted units held while a patient is in treatment.
+* The conflict metric counts every waiting patient that cannot be admitted in a tick, so it grows with queue length.
+* Fitness weights are design choices, not clinically derived; critical coverage saturates at 100 % in
+  all scenarios, so the ranking is decided by small waiting/conflict differences.
+* No clinical validation, no real data, no real-time or production integration.
+
+## License
+
+No license file is included yet; add one before publishing (e.g. MIT or Apache-2.0).

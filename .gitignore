@@ -1,8 +1,8 @@
-__pycache__
 __pycache__/
-/__pycache__
+*.pyc
 .env
 .env.*
 !.env.example
 .pytest_cache/
-.pytest_cache
+.coverage
+htmlcov/

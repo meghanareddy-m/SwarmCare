@@ -1,1 +1,3 @@
-# No third-party packages required for the baseline.
+# The core simulation and all algorithms use only the Python standard library.
+# Optional (figures produced by `python main.py --plots`):
+# matplotlib>=3.7

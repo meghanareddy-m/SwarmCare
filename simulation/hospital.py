@@ -36,12 +36,20 @@ class HospitalSimulator:
                 ventilator_required=p["ventilator_required"],
                 arrival_time=p["arrival_time"],
                 service_duration=p.get("service_duration", 1),
+                age=p.get("age"),
+                spo2=p.get("spo2"),
+                diagnostic=p.get("diagnostic"),
+                diagnostic_duration=p.get("diagnostic_duration", 1),
             )
             for p in self.config["patients"]
         ]
         for patient in self.patients:
             patient.completed = False
             patient.remaining_service = 0
+            if patient.diagnostic is not None and self.diagnostics.get(patient.diagnostic, 0) <= 0:
+                raise ValueError(
+                    f"patient {patient.patient_id} needs diagnostic '{patient.diagnostic}' "
+                    f"but the hospital has no such capacity")
 
         self.events = sorted(
             self.config.get("events", []),
@@ -57,7 +65,47 @@ class HospitalSimulator:
         self.total_ventilator_used = 0
 
     def active_patients(self):
-        return [p for p in self.patients if (p.arrival_time <= self.time and not p.treated and not p.completed)]
+        """Arrived patients that are ready for admission.
+
+        Patients that still need a diagnostic (``diagnostic`` set, not yet done)
+        are held in the diagnostics queue instead and are not active.
+        """
+        return [
+            p for p in self.patients
+            if p.arrival_time <= self.time and not p.treated and not p.completed
+            and (p.diagnostic is None or p.diagnostic_done)
+        ]
+
+    def diagnostic_queue(self):
+        """Arrived patients waiting for or undergoing a diagnostic."""
+        return [
+            p for p in self.patients
+            if p.arrival_time <= self.time and p.diagnostic is not None
+            and not p.diagnostic_done and not p.treated and not p.completed
+        ]
+
+    def _advance_diagnostics(self):
+        """Start and progress diagnostics for one tick (capacity per modality).
+
+        Free units are given to waiting patients by severity (then arrival, id);
+        a diagnostic of duration ``d`` occupies its unit for ``d`` ticks, so a
+        patient becomes admissible ``d`` ticks after the diagnostic started.
+        """
+        queue = self.diagnostic_queue()
+        for modality, capacity in self.diagnostics.items():
+            busy = sum(1 for p in queue if p.diagnostic == modality and p.diagnostic_started)
+            waiting = sorted(
+                (p for p in queue if p.diagnostic == modality and not p.diagnostic_started),
+                key=lambda p: (-p.severity, p.arrival_time, p.patient_id),
+            )
+            for p in waiting[:max(0, capacity - busy)]:
+                p.diagnostic_started = True
+                p.diagnostic_remaining = p.diagnostic_duration
+        for p in queue:
+            if p.diagnostic_started:
+                p.diagnostic_remaining -= 1
+                if p.diagnostic_remaining <= 0:
+                    p.diagnostic_done = True
 
     def treatment_patients(self):
         """Return patients currently occupying treatment resources."""
@@ -124,8 +172,12 @@ class HospitalSimulator:
                 patient.assigned_doctor = None
                 patient.assigned_bed = None
 
-        for patient in self.active_patients():
-            patient.waiting_time += 1
+        self._advance_diagnostics()
+        # Everyone who has arrived and is not yet in treatment is waiting,
+        # including patients in the diagnostics queue.
+        for patient in self.patients:
+            if patient.arrival_time <= self.time and not patient.treated and not patient.completed:
+                patient.waiting_time += 1
         self.time += 1
 
     def state_summary(self):
@@ -133,6 +185,7 @@ class HospitalSimulator:
         return {
             "time": self.time,
             "active_unserved": len(active),
+            "diagnostic_queue": len(self.diagnostic_queue()),
             "treated": sum(p.treated for p in self.patients),
             "icu_beds": self.icu_beds,
             "ward_beds": self.ward_beds,

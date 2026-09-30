@@ -1,0 +1,15 @@
+scenario,policy,kind,fitness,critical_mean_wait,critical_max_wait,noncritical_mean_wait,critical_completed,completed,reserve_blocked
+S6_resource_stress,centralized greedy,centralized,0.654,2.2857142857142856,14,13.492753623188406,21/21,90/90,0
+S6_resource_stress,centralized fuzzy,centralized,0.6536,2.4285714285714284,11,13.55072463768116,21/21,90/90,0
+S6_resource_stress,"decentralized, reserve off",decentralized,0.6536,2.4285714285714284,11,13.55072463768116,21/21,90/90,0
+S6_resource_stress,"decentralized, reserve 10% (severity >= 0.8)",reserve,0.6453,2.3333333333333335,11,15.492753623188406,21/21,90/90,521
+S6_resource_stress,"decentralized, reserve 20% (severity >= 0.8)",reserve,0.6333,2.3333333333333335,11,18.36231884057971,21/21,90/90,954
+S6_resource_stress,"decentralized, reserve 30% (severity >= 0.8)",reserve,0.6223,2.3333333333333335,11,21.028985507246375,21/21,90/90,1225
+S6_resource_stress,"decentralized, reserve 40% (severity >= 0.8)",reserve,0.6167,2.3333333333333335,11,22.420289855072465,21/21,90/90,1241
+S7_reserve_stress,centralized greedy,centralized,0.6809,6.285714285714286,8,6.535714285714286,7/7,35/35,0
+S7_reserve_stress,centralized fuzzy,centralized,0.6805,6.285714285714286,7,6.607142857142857,7/7,35/35,0
+S7_reserve_stress,"decentralized, reserve off",decentralized,0.6805,6.285714285714286,7,6.607142857142857,7/7,35/35,0
+S7_reserve_stress,"decentralized, reserve 10% (severity >= 0.8)",reserve,0.6771,4.0,5,7.821428571428571,7/7,35/35,118
+S7_reserve_stress,"decentralized, reserve 20% (severity >= 0.8)",reserve,0.6756,4.0,5,8.107142857142858,7/7,35/35,140
+S7_reserve_stress,"decentralized, reserve 30% (severity >= 0.8)",reserve,0.6733,4.0,5,8.571428571428571,7/7,35/35,180
+S7_reserve_stress,"decentralized, reserve 40% (severity >= 0.8)",reserve,0.6609,0.8571428571428571,3,11.892857142857142,7/7,35/35,245

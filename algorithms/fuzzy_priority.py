@@ -54,6 +54,8 @@ def fuzzy_priority(patient):
         - severity
         - oxygen requirement
         - waiting time
+        - SpO2 (optional, percent)
+        - age (optional, years)
 
     Output:
         priority score in [0, 1]
@@ -161,6 +163,24 @@ def fuzzy_priority(patient):
     rules.append(
         (min(severity_high, waiting_high), 1.00)
     )
+
+    # Optional clinical inputs. When age / SpO2 are not recorded for a patient
+    # these rules are not added at all, so results are identical to the
+    # three-input rule base.
+    spo2 = getattr(patient, "spo2", None)
+    if spo2 is not None:
+        # Rule 8: IF SpO2 is LOW (hypoxemic) THEN priority is VERY HIGH
+        rules.append(
+            (left_shoulder_membership(spo2, peak=88.0, high=94.0), 0.95)
+        )
+
+    age = getattr(patient, "age", None)
+    if age is not None:
+        # Rule 9: IF age is HIGH AND severity is MEDIUM THEN priority is HIGH
+        rules.append(
+            (min(right_shoulder_membership(age, low=60.0, peak=80.0),
+                 severity_medium), 0.80)
+        )
 
     # --------------------------------------------------
     # DEFUZZIFICATION

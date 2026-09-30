@@ -1,0 +1,198 @@
+{
+  "rows": [
+    {
+      "scenario": "S6_resource_stress",
+      "policy": "centralized greedy",
+      "kind": "centralized",
+      "fitness": 0.654,
+      "critical_mean_wait": 2.2857142857142856,
+      "critical_max_wait": 14,
+      "noncritical_mean_wait": 13.492753623188406,
+      "critical_completed": "21/21",
+      "completed": "90/90",
+      "reserve_blocked": 0
+    },
+    {
+      "scenario": "S6_resource_stress",
+      "policy": "centralized fuzzy",
+      "kind": "centralized",
+      "fitness": 0.6536,
+      "critical_mean_wait": 2.4285714285714284,
+      "critical_max_wait": 11,
+      "noncritical_mean_wait": 13.55072463768116,
+      "critical_completed": "21/21",
+      "completed": "90/90",
+      "reserve_blocked": 0
+    },
+    {
+      "scenario": "S6_resource_stress",
+      "policy": "decentralized, reserve off",
+      "kind": "decentralized",
+      "fitness": 0.6536,
+      "critical_mean_wait": 2.4285714285714284,
+      "critical_max_wait": 11,
+      "noncritical_mean_wait": 13.55072463768116,
+      "critical_completed": "21/21",
+      "completed": "90/90",
+      "reserve_blocked": 0
+    },
+    {
+      "scenario": "S6_resource_stress",
+      "policy": "decentralized, reserve 10% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6453,
+      "critical_mean_wait": 2.3333333333333335,
+      "critical_max_wait": 11,
+      "noncritical_mean_wait": 15.492753623188406,
+      "critical_completed": "21/21",
+      "completed": "90/90",
+      "reserve_blocked": 521
+    },
+    {
+      "scenario": "S6_resource_stress",
+      "policy": "decentralized, reserve 20% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6333,
+      "critical_mean_wait": 2.3333333333333335,
+      "critical_max_wait": 11,
+      "noncritical_mean_wait": 18.36231884057971,
+      "critical_completed": "21/21",
+      "completed": "90/90",
+      "reserve_blocked": 954
+    },
+    {
+      "scenario": "S6_resource_stress",
+      "policy": "decentralized, reserve 30% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6223,
+      "critical_mean_wait": 2.3333333333333335,
+      "critical_max_wait": 11,
+      "noncritical_mean_wait": 21.028985507246375,
+      "critical_completed": "21/21",
+      "completed": "90/90",
+      "reserve_blocked": 1225
+    },
+    {
+      "scenario": "S6_resource_stress",
+      "policy": "decentralized, reserve 40% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6167,
+      "critical_mean_wait": 2.3333333333333335,
+      "critical_max_wait": 11,
+      "noncritical_mean_wait": 22.420289855072465,
+      "critical_completed": "21/21",
+      "completed": "90/90",
+      "reserve_blocked": 1241
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "policy": "centralized greedy",
+      "kind": "centralized",
+      "fitness": 0.6809,
+      "critical_mean_wait": 6.285714285714286,
+      "critical_max_wait": 8,
+      "noncritical_mean_wait": 6.535714285714286,
+      "critical_completed": "7/7",
+      "completed": "35/35",
+      "reserve_blocked": 0
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "policy": "centralized fuzzy",
+      "kind": "centralized",
+      "fitness": 0.6805,
+      "critical_mean_wait": 6.285714285714286,
+      "critical_max_wait": 7,
+      "noncritical_mean_wait": 6.607142857142857,
+      "critical_completed": "7/7",
+      "completed": "35/35",
+      "reserve_blocked": 0
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "policy": "decentralized, reserve off",
+      "kind": "decentralized",
+      "fitness": 0.6805,
+      "critical_mean_wait": 6.285714285714286,
+      "critical_max_wait": 7,
+      "noncritical_mean_wait": 6.607142857142857,
+      "critical_completed": "7/7",
+      "completed": "35/35",
+      "reserve_blocked": 0
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "policy": "decentralized, reserve 10% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6771,
+      "critical_mean_wait": 4.0,
+      "critical_max_wait": 5,
+      "noncritical_mean_wait": 7.821428571428571,
+      "critical_completed": "7/7",
+      "completed": "35/35",
+      "reserve_blocked": 118
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "policy": "decentralized, reserve 20% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6756,
+      "critical_mean_wait": 4.0,
+      "critical_max_wait": 5,
+      "noncritical_mean_wait": 8.107142857142858,
+      "critical_completed": "7/7",
+      "completed": "35/35",
+      "reserve_blocked": 140
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "policy": "decentralized, reserve 30% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6733,
+      "critical_mean_wait": 4.0,
+      "critical_max_wait": 5,
+      "noncritical_mean_wait": 8.571428571428571,
+      "critical_completed": "7/7",
+      "completed": "35/35",
+      "reserve_blocked": 180
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "policy": "decentralized, reserve 40% (severity >= 0.8)",
+      "kind": "reserve",
+      "fitness": 0.6609,
+      "critical_mean_wait": 0.8571428571428571,
+      "critical_max_wait": 3,
+      "noncritical_mean_wait": 11.892857142857142,
+      "critical_completed": "7/7",
+      "completed": "35/35",
+      "reserve_blocked": 245
+    }
+  ],
+  "verdict": [
+    {
+      "scenario": "S6_resource_stress",
+      "best_centralized": "centralized greedy",
+      "best_reserve": "decentralized, reserve 10% (severity >= 0.8)",
+      "critical_wait_centralized": 2.2857142857142856,
+      "critical_wait_reserve": 2.3333333333333335,
+      "decentralized_better_on_critical": false,
+      "noncritical_wait_centralized": 13.492753623188406,
+      "noncritical_wait_reserve": 15.492753623188406,
+      "fitness_centralized": 0.654,
+      "fitness_reserve": 0.6453
+    },
+    {
+      "scenario": "S7_reserve_stress",
+      "best_centralized": "centralized greedy",
+      "best_reserve": "decentralized, reserve 40% (severity >= 0.8)",
+      "critical_wait_centralized": 6.285714285714286,
+      "critical_wait_reserve": 0.8571428571428571,
+      "decentralized_better_on_critical": true,
+      "noncritical_wait_centralized": 6.535714285714286,
+      "noncritical_wait_reserve": 11.892857142857142,
+      "fitness_centralized": 0.6809,
+      "fitness_reserve": 0.6609
+    }
+  ]
+}
